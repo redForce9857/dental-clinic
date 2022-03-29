@@ -2,6 +2,8 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateDto } from './DTO/create.dto';
 import { UpdateDto } from './DTO/update.dto';
 import { Clinic, ClinicRepository } from './entity/clinic.entity';
+import { Employees } from './enum/doctors.enum';
+import { DoctorsStatus } from './enum/doctorsStatus.enum';
 
 @Injectable()
 export class ClinicService {
@@ -11,15 +13,22 @@ export class ClinicService {
         return this.clinicRepo.find()
     }
 
-    getAllForOneDoctor(){
-       return this.clinicRepo.find()
+    getAllForOneDoctor(workers: Employees):Promise<Array<Clinic>>{
+       return this.clinicRepo.createQueryBuilder().where(
+           "doctors = :h", {h: workers}
+       ).getMany()
+    }
+
+    async getActiveEntries(): Promise<Array<Clinic>>{
+        return this.clinicRepo.createQueryBuilder().where(
+            "status = :b", {b: DoctorsStatus.OK}
+        ).getMany()
     }
 
     async createEntry(createDto: CreateDto): Promise<Clinic>{
         const start = new Date(createDto.startBooking)
         const end = new Date(start.getTime()+ 3_600_000)
-        console.log(start);
-        console.log(end);
+    
     
         if((start.getHours()-6 >= 12 && start.getHours()-6 <= 13)) {
             throw new BadRequestException('Обееед')
@@ -51,8 +60,6 @@ export class ClinicService {
         }
         const start = new Date(update.startBooking)
         const end = new Date(start.getTime()+ 3_600_000)
-        console.log(start);
-        console.log(end);
     
         if((start.getHours()-6 >= 12 && start.getHours()-6 <= 13)) {
             throw new BadRequestException('Обееед')
@@ -78,15 +85,11 @@ export class ClinicService {
         Object.assign(entity, update)
         return await this.clinicRepo.save(entity)
     }
-    // DTO for deletion
     async delete(id: number){
         const entity = await this.clinicRepo.findOne({where: {id:id}})
         if(!entity){
             throw new NotFoundException();
         }
         return await this.clinicRepo.delete(id)
-    }
-    async getActive(): Promise<Clinic>{
-        return
     }
 }

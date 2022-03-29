@@ -3,6 +3,8 @@ import { ClinicService } from './clinic.service';
 import { CreateDto } from './DTO/create.dto';
 import { UpdateDto } from './DTO/update.dto';
 import { Clinic } from './entity/clinic.entity';
+import { Employees } from './enum/doctors.enum';
+import { DoctorsStatus } from './enum/doctorsStatus.enum';
 
 @Controller('clinic')
 export class ClinicController {
@@ -12,10 +14,15 @@ export class ClinicController {
     getAll(){
         return this.service.getAll()
     }
+
+    @Get(':active')
+    async getActiveEntries():Promise<Array<Clinic>> {
+        return await this.service.getActiveEntries()
+    }
     
-    @Get(':/firstDoctor')
-    getAllForOneDoctor(){
-        return this.service.getAllForOneDoctor()
+    @Get(':first')
+    getAllForOneDoctor(@Param('first') first: Employees.first):Promise<Array<Clinic>>{
+        return this.service.getAllForOneDoctor(first)
     }
 
     @Post()

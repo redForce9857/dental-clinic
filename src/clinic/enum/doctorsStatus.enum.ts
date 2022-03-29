@@ -1,5 +1,6 @@
 
-export enum Doctors{
+
+export enum DoctorsStatus{
     OK = 'OK',
     BUSY = 'BUSY'
 }
