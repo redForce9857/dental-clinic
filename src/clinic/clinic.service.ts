@@ -14,13 +14,15 @@ export class ClinicService {
     }
 
     getAllForOneDoctor(workers: Employees):Promise<Array<Clinic>>{
-       return this.clinicRepo.createQueryBuilder().where(
-           "doctors = :h", {h: workers}
-       ).getMany()
+        let g = this.clinicRepo
+        .createQueryBuilder()
+        .where("doctors = :h", {h: workers})
+        
+       return g.getMany()
     }
 
     async getActiveEntries(): Promise<Array<Clinic>>{
-        return this.clinicRepo.createQueryBuilder().where(
+        return this.clinicRepo.createQueryBuilder().andWhere(
             "status = :b", {b: DoctorsStatus.OK}
         ).getMany()
     }

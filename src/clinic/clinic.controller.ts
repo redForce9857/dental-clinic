@@ -20,8 +20,8 @@ export class ClinicController {
         return await this.service.getActiveEntries()
     }
     
-    @Get(':first')
-    getAllForOneDoctor(@Param('first') first: Employees.first):Promise<Array<Clinic>>{
+    @Get('n/:first')
+    getAllForOneDoctor(@Param('first') first: Employees):Promise<Array<Clinic>>{
         return this.service.getAllForOneDoctor(first)
     }
 
